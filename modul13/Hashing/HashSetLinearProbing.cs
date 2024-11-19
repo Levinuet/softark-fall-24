@@ -1,4 +1,5 @@
 using Hashing;
+using System.Runtime.CompilerServices;
 
 public class HashSetLinearProbing : HashSet {
     private Object[] buckets;
@@ -11,17 +12,75 @@ public class HashSetLinearProbing : HashSet {
     }
 
     public bool Contains(Object x) {
-        // TODO: Implement!
+        
+        int h = HashValue(x);
+        int i = h;
+        do
+        {
+            if (buckets[i] == null)
+            {
+                return false;
+            }
+            if (buckets[i].Equals(x))
+            {
+                return true;
+            }
+            i = (i + 1) % buckets.Length;
+        } while (i != h);
+
+
+
         return false;
     }
 
     public bool Add(Object x) {      
-        // TODO: Implement!
+        if (x == null)
+        {
+            return false;
+        }
+        if (currentSize == buckets.Length)
+        {
+            return false;
+        }
+        int h = HashValue(x);
+        int i = h;
+        do
+        {
+            if (buckets[i] == null || buckets[i].Equals(State.DELETED))
+            {
+                buckets[i] = x;
+                currentSize++;
+                return true;
+            }
+            if (buckets[i].Equals(x))
+            {
+                return false;
+            }
+            i = (i + 1) % buckets.Length;
+        } while (i != h);
+
         return false;
     }
 
     public bool Remove(Object x) {
-        // TODO: Implement!
+        
+        int h = HashValue(x);
+        int i = h;
+        do
+        {
+            if (buckets[i] == null)
+            {
+                return false;
+            }
+            if (buckets[i].Equals(x))
+            {
+                buckets[i] = State.DELETED;
+                currentSize--;
+                return true;
+            }
+            i = (i + 1) % buckets.Length;
+        } while (i != h);
+
         return false;
     }
 

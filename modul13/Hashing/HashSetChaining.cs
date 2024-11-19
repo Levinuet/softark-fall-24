@@ -41,6 +41,29 @@ public class HashSetChaining : HashSet
         return found;
     }
 
+    //Lav en forbedret udgave af HashSetChaining der håndterer når arrayet bliver fyldt.
+    //Lav en rehash-metode der anvendes fra add-metoden, så antallet af pladser fordobles, når load-faktoren bliver større end 0.75 (dvs. mindst 75% af arrayet er fyldt op).
+    //Skriv nogle nye tests der tester, at settet kan fyldes op og stadig fungerer efter hensigten.
+
+    private void Rehash()
+    {
+        Node[] oldBuckets = buckets;
+        buckets = new Node[2 * oldBuckets.Length];
+        for (int i = 0; i < oldBuckets.Length; i++)
+        {
+            Node temp = oldBuckets[i];
+            while (temp != null)
+            {
+                Node next = temp.Next;
+                int h = HashValue(temp.Data);
+                temp.Next = buckets[h];
+                buckets[h] = temp;
+                temp = next;
+            }
+        }
+    }
+
+
     public bool Add(Object x)
     {
         int h = HashValue(x);
@@ -71,8 +94,37 @@ public class HashSetChaining : HashSet
 
     public bool Remove(Object x)
     {
-        // TODO: Implement!
-        // SKal returnerer true hvis den finder noget at fjerne
+        
+        int h = HashValue(x);
+        Node bucket = buckets[h];
+        Node prev = null;
+        bool found = false;
+        while (!found && bucket != null)
+        {
+            if (bucket.Data.Equals(x))
+            {
+                found = true;
+            }
+            else
+            {
+                prev = bucket;
+                bucket = bucket.Next;
+            }
+        }
+        if (!found)
+        {
+            return false;
+        }
+        if (prev == null)
+        {
+            buckets[h] = bucket.Next;
+        }
+        else
+        {
+            prev.Next = bucket.Next;
+        }
+        currentSize--;
+
         return false;
     }
 
